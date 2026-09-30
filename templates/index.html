@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poga Cakes and Pastries | Fresh Nigerian Bakery & Sweets</title>
+    
+    <!-- Google Fonts & FontAwesome -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <header class="navbar">
+        <div class="nav-container">
+            <a href="#" class="brand">
+                <i class="fas fa-birthday-cake brand-icon"></i>
+                <div class="brand-text">
+                    <h1>Poga Cakes</h1>
+                    <span>& Pastries</span>
+                </div>
+            </a>
+
+            <!-- Search Bar -->
+            <div class="search-form">
+                <input type="text" id="search-input" class="search-input" placeholder="Search milk doughnut, chin chin, plantain, cakes...">
+                <button class="search-btn"><i class="fas fa-search"></i></button>
+            </div>
+
+            <!-- Nav Action Buttons -->
+            <div class="nav-actions">
+                <button class="btn-icon-label" id="nav-cart-btn">
+                    <i class="fas fa-shopping-bag" style="color: var(--secondary); font-size:1.2rem;"></i>
+                    <span class="btn-text">Cart</span>
+                    <span class="cart-badge" id="cart-badge-count">0</span>
+                </button>
+
+                <!-- Guest Auth Button -->
+                <button class="btn-icon-label" id="nav-auth-btn" onclick="openModal('auth-modal')">
+                    <i class="fas fa-user-circle" style="font-size:1.2rem;"></i>
+                    <span class="btn-text">Login / Register</span>
+                </button>
+
+                <!-- User Logged In Display -->
+                <div id="nav-user-display" style="display:none; align-items:center; gap:10px;">
+                    <button class="btn-icon-label" onclick="viewUserOrders()">
+                        <i class="fas fa-receipt" style="color:var(--secondary);"></i>
+                        <span class="user-name btn-text">Account</span>
+                    </button>
+                    <button class="btn-icon-label" onclick="logoutUser()" title="Logout" style="padding:6px 10px;">
+                        <i class="fas fa-sign-out-alt" style="color:#ff7043;"></i>
+                    </button>
+                </div>
+
+                <!-- Admin Link -->
+                <button class="btn-icon-label" id="nav-admin-link" style="display:none; background:var(--secondary); color:var(--primary);" onclick="openAdminPanel()">
+                    <i class="fas fa-shield-alt"></i>
+                    <span class="btn-text">Admin Portal</span>
+                </button>
+
+                <button class="mobile-menu-toggle" onclick="document.querySelector('.mobile-nav').classList.toggle('open')">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Drawer -->
+        <div class="mobile-nav">
+            <input type="text" class="search-input" placeholder="Search pastries..." oninput="fetchProducts(this.value)">
+        </div>
+    </header>
+
+    <!-- Dynamic Hero Banner Carousel -->
+    <section class="hero-slider-container">
+        <div class="hero-slider" id="hero-slider">
+            
+            <!-- Slide 1: Milk Doughnuts -->
+            <div class="hero-slide active" style="background-image: linear-gradient(rgba(44, 24, 16, 0.75), rgba(44, 24, 16, 0.85)), url('https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?auto=format&fit=crop&w=1600&q=80');">
+                <div class="hero-content">
+                    <div class="hero-tagline">✨ Freshly Baked Daily in Nigeria ✨</div>
+                    <h2 class="hero-title">Fluffy Milk Doughnuts & Sweet Glazed Treats</h2>
+                    <p class="hero-desc">Ultra-soft, pillowy milk-glazed doughnuts dusted with fine icing sugar. Order fresh for instant delivery!</p>
+                    <div class="hero-btns">
+                        <a href="#menu-section" class="btn btn-primary"><i class="fas fa-cookie-bite"></i> Order Doughnuts Now</a>
+                        <button class="btn btn-outline" onclick="openModal('auth-modal')"><i class="fas fa-user-plus"></i> Create Account</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 2: Chin Chin & Plantain Chips -->
+            <div class="hero-slide" style="background-image: linear-gradient(rgba(44, 24, 16, 0.75), rgba(44, 24, 16, 0.85)), url('https://images.unsplash.com/photo-1599785209707-a456fc1337cc?auto=format&fit=crop&w=1600&q=80');">
+                <div class="hero-content">
+                    <div class="hero-tagline">✨ Authentic Homemade Crunch ✨</div>
+                    <h2 class="hero-title">Crunchy Sweet Chin Chin & Plantain Chips</h2>
+                    <p class="hero-desc">Golden, crispy Nigerian Chin Chin enriched with real butter & aromatic nutmeg, paired with spicy plantain chips.</p>
+                    <div class="hero-btns">
+                        <a href="#menu-section" class="btn btn-primary"><i class="fas fa-box-open"></i> Buy Snacks & Chin Chin</a>
+                        <button class="btn btn-outline" onclick="openModal('auth-modal')"><i class="fas fa-user-plus"></i> Register Account</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 3: Golden Fried Puff Puff -->
+            <div class="hero-slide" style="background-image: linear-gradient(rgba(44, 24, 16, 0.75), rgba(44, 24, 16, 0.85)), url('https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?auto=format&fit=crop&w=1600&q=80');">
+                <div class="hero-content">
+                    <div class="hero-tagline">✨ Hot & Freshly Fried Delicacy ✨</div>
+                    <h2 class="hero-title">Golden Puff Puff Platters & Beef Meat Pies</h2>
+                    <p class="hero-desc">Sweet, airy, golden dough spheres and flaky meat pies stuffed with seasoned minced beef, carrots, and potatoes.</p>
+                    <div class="hero-btns">
+                        <a href="#menu-section" class="btn btn-primary"><i class="fas fa-utensils"></i> Order Puff Puff Platter</a>
+                        <button class="btn btn-outline" onclick="openModal('auth-modal')"><i class="fas fa-user-plus"></i> Get Started</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 4: Custom Birthday & Celebration Cakes -->
+            <div class="hero-slide" style="background-image: linear-gradient(rgba(44, 24, 16, 0.75), rgba(44, 24, 16, 0.85)), url('https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=1600&q=80');">
+                <div class="hero-content">
+                    <div class="hero-tagline">✨ Luxury Celebration Cakes ✨</div>
+                    <h2 class="hero-title">Custom Birthday Cakes & Red Velvet Delights</h2>
+                    <p class="hero-desc">Moist chocolate fudge, vanilla buttercream, and signature Nigerian red velvet cakes crafted for your special moments.</p>
+                    <div class="hero-btns">
+                        <a href="#menu-section" class="btn btn-primary"><i class="fas fa-birthday-cake"></i> Order Custom Cake</a>
+                        <button class="btn btn-outline" onclick="openModal('auth-modal')"><i class="fas fa-user-plus"></i> Join Poga Bakery</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 5: Chilled Natural Zobo Drink -->
+            <div class="hero-slide" style="background-image: linear-gradient(rgba(44, 24, 16, 0.75), rgba(44, 24, 16, 0.85)), url('https://images.unsplash.com/photo-1556881286-fc6915169721?auto=format&fit=crop&w=1600&q=80');">
+                <div class="hero-content">
+                    <div class="hero-tagline">✨ 100% Refreshing Natural Drink ✨</div>
+                    <h2 class="hero-title">Chilled Pineapple & Ginger Zobo Drinks</h2>
+                    <p class="hero-desc">Natural hibiscus infusion with fresh pineapple, ginger, cloves, and natural honey. Served ice cold!</p>
+                    <div class="hero-btns">
+                        <a href="#menu-section" class="btn btn-primary"><i class="fas fa-glass-martini-alt"></i> Order Chilled Zobo</a>
+                        <button class="btn btn-outline" onclick="openModal('auth-modal')"><i class="fas fa-user-plus"></i> Create Account</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Carousel Indicators (Dots) -->
+        <div class="hero-dots">
+            <span class="hero-dot active" onclick="goToSlide(0)"></span>
+            <span class="hero-dot" onclick="goToSlide(1)"></span>
+            <span class="hero-dot" onclick="goToSlide(2)"></span>
+            <span class="hero-dot" onclick="goToSlide(3)"></span>
+            <span class="hero-dot" onclick="goToSlide(4)"></span>
+        </div>
+    </section>
+
+    <!-- Main Content Area -->
+    <main class="main-container" id="menu-section">
+        
+        <!-- Section Header -->
+        <div class="section-header">
+            <h2 class="section-title">Our Pastry Menu</h2>
+            <p class="section-subtitle">Prices listed in Nigerian Naira (₦). Select a category below to filter.</p>
+        </div>
+
+        <!-- Category Tabs Filter -->
+        <div class="categories-nav">
+            <button class="category-tab active" data-category="All"><i class="fas fa-border-all"></i> All Products</button>
+            <button class="category-tab" data-category="Doughnuts"><i class="fas fa-dot-circle"></i> Milk Doughnuts</button>
+            <button class="category-tab" data-category="Chin Chin & Snacks"><i class="fas fa-box-open"></i> Chin Chin & Plantain</button>
+            <button class="category-tab" data-category="Cakes"><i class="fas fa-birthday-cake"></i> Cakes</button>
+            <button class="category-tab" data-category="Pastries & Meat Pies"><i class="fas fa-bread-slice"></i> Pastries & Meat Pies</button>
+            <button class="category-tab" data-category="Drinks"><i class="fas fa-glass-martini-alt"></i> Drinks & Zobo</button>
+        </div>
+
+        <!-- Dynamic Products Grid -->
+        <div class="products-grid" id="products-grid">
+            <!-- Rendered dynamically by JavaScript -->
+        </div>
+
+    </main>
+
+    <!-- Shopping Cart Modal -->
+    <div class="modal-overlay" id="cart-modal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-shopping-cart" style="color:var(--secondary);"></i> Your Order Cart</h3>
+                <button class="modal-close" onclick="closeModal('cart-modal')">&times;</button>
+            </div>
+
+            <div class="cart-items-list" id="cart-items-container">
+                <!-- Cart items list dynamically rendered -->
+            </div>
+
+            <div class="cart-total-bar">
+                <span>Total Amount:</span>
+                <span id="cart-total-amount" style="color:var(--accent);">₦0</span>
+            </div>
+
+            <div style="display:flex; gap:12px;">
+                <button class="btn btn-outline" style="flex:1; color:var(--primary); border-color:var(--primary);" onclick="closeModal('cart-modal')">Continue Shopping</button>
+                <button class="btn btn-accent" style="flex:1;" onclick="proceedToCheckout()">Proceed to Checkout <i class="fas fa-arrow-right"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div class="modal-overlay" id="checkout-modal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-shipping-fast" style="color:var(--secondary);"></i> Checkout & Delivery</h3>
+                <button class="modal-close" onclick="closeModal('checkout-modal')">&times;</button>
+            </div>
+
+            <form id="checkout-form">
+                <div class="form-group">
+                    <label class="form-label">Full Name *</label>
+                    <input type="text" id="checkout-name" class="form-input" placeholder="e.g. Blessing Okeke" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Phone Number (WhatsApp) *</label>
+                        <input type="tel" id="checkout-phone" class="form-input" placeholder="08012345678" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email Address *</label>
+                        <input type="email" id="checkout-email" class="form-input" placeholder="you@email.com" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Delivery Address in Nigeria *</label>
+                    <textarea id="checkout-address" class="form-textarea" rows="2" placeholder="Street Address, Area, City (e.g. 15 Admiralty Way, Lekki Phase 1, Lagos)" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Payment Method *</label>
+                    <select id="checkout-payment" class="form-select">
+                        <option value="Pay on Delivery">Cash / POS Transfer on Delivery</option>
+                        <option value="Instant Bank Transfer">Instant Bank Transfer (Nigerian Banks)</option>
+                        <option value="Debit Card Online">Debit Card (Mastercard/Visa/Verve)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Special Delivery Instructions / Custom Notes</label>
+                    <input type="text" id="checkout-notes" class="form-input" placeholder="e.g. Please write 'Happy Birthday Chiamaka' on the cake box">
+                </div>
+
+                <div style="background:#f9f4ef; padding:15px; border-radius:8px; margin-bottom:20px; text-align:space-between;">
+                    <span style="font-weight:600;">Total Payable:</span>
+                    <span id="checkout-summary-amount" style="font-weight:800; font-size:1.3rem; color:var(--accent); float:right;">₦0</span>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width:100%;"><i class="fas fa-check-circle"></i> Confirm & Place Order</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Order Confirmation Modal -->
+    <div class="modal-overlay" id="confirmation-modal">
+        <div class="modal-box" style="text-align:center;">
+            <div style="font-size:3.5rem; color:var(--success); margin-bottom:15px;"><i class="fas fa-check-circle"></i></div>
+            <h3 class="modal-title" style="margin-bottom:10px;">Order Placed Successfully!</h3>
+            <p style="color:var(--text-muted); margin-bottom:20px;">Thank you for ordering with Poga Cakes and Pastries. Your order is now being processed by our bakers.</p>
+
+            <div style="background:#faf6f0; padding:15px; border-radius:10px; margin-bottom:25px; text-align:left;">
+                <p><strong>Order Reference:</strong> <span id="confirm-order-ref" style="color:var(--accent); font-weight:bold;">#POGA-XXXXXX</span></p>
+                <p><strong>Total Amount:</strong> <span id="confirm-order-total" style="font-weight:bold;">₦0</span></p>
+                <p><strong>Status:</strong> <span class="status-badge status-pending">Pending Confirmation</span></p>
+            </div>
+
+            <button class="btn btn-primary" onclick="closeModal('confirmation-modal')">Back to Bakery Menu</button>
+        </div>
+    </div>
+
+    <!-- Customer Auth Modal (Login / Register) -->
+    <div class="modal-overlay" id="auth-modal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-user-lock" style="color:var(--secondary);"></i> Customer Account</h3>
+                <button class="modal-close" onclick="closeModal('auth-modal')">&times;</button>
+            </div>
+
+            <div class="admin-header-tabs" style="justify-content:center;">
+                <div class="admin-tab active" id="auth-tab-login-btn" onclick="document.getElementById('auth-login-sec').style.display='block'; document.getElementById('auth-reg-sec').style.display='none'; this.classList.add('active'); document.getElementById('auth-tab-reg-btn').classList.remove('active');">Login</div>
+                <div class="admin-tab" id="auth-tab-reg-btn" onclick="document.getElementById('auth-login-sec').style.display='none'; document.getElementById('auth-reg-sec').style.display='block'; this.classList.add('active'); document.getElementById('auth-tab-login-btn').classList.remove('active');">Register</div>
+            </div>
+
+            <!-- Login Section -->
+            <div id="auth-login-sec">
+                <form id="login-form">
+                    <div class="form-group">
+                        <label class="form-label">Email Address</label>
+                        <input type="email" id="login-email" class="form-input" placeholder="e.g. customer@gmail.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <input type="password" id="login-password" class="form-input" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width:100%;"><i class="fas fa-sign-in-alt"></i> Login to Account</button>
+                </form>
+
+                <div style="margin-top:20px; padding-top:15px; border-top:1px solid #eee; text-align:center; font-size:0.85rem; color:#777;">
+                    <p><strong>Demo Credentials:</strong></p>
+                    <p>Customer: <code>customer@gmail.com</code> / <code>password123</code></p>
+                    <p>Admin: <code>admin@pogacakes.ng</code> / <code>admin123</code></p>
+                </div>
+            </div>
+
+            <!-- Register Section -->
+            <div id="auth-reg-sec" style="display:none;">
+                <form id="register-form">
+                    <div class="form-group">
+                        <label class="form-label">Full Name *</label>
+                        <input type="text" id="reg-name" class="form-input" placeholder="e.g. Blessing Okeke" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email Address *</label>
+                        <input type="email" id="reg-email" class="form-input" placeholder="you@email.com" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Phone Number *</label>
+                            <input type="tel" id="reg-phone" class="form-input" placeholder="08012345678" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Password *</label>
+                            <input type="password" id="reg-password" class="form-input" placeholder="••••••••" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Delivery Address *</label>
+                        <input type="text" id="reg-address" class="form-input" placeholder="Lagos, Abuja, or Port Harcourt address" required>
+                    </div>
+                    <button type="submit" class="btn btn-accent" style="width:100%;"><i class="fas fa-user-check"></i> Register Account</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Customer Order History Modal -->
+    <div class="modal-overlay" id="my-orders-modal">
+        <div class="modal-box" style="max-width:650px;">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-history" style="color:var(--secondary);"></i> My Order History</h3>
+                <button class="modal-close" onclick="closeModal('my-orders-modal')">&times;</button>
+            </div>
+            <div id="my-orders-list">
+                <!-- Orders rendered via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Panel Modal -->
+    <div class="modal-overlay" id="admin-modal">
+        <div class="modal-box admin-modal">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-user-shield" style="color:var(--secondary);"></i> Poga Bakery Admin Dashboard</h3>
+                <button class="modal-close" onclick="closeModal('admin-modal')">&times;</button>
+            </div>
+
+            <!-- Admin Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Total Sales</h3>
+                    <p id="admin-stat-revenue">₦0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Orders</h3>
+                    <p id="admin-stat-orders">0</p>
+                </div>
+                <div class="stat-card" style="border-left-color: var(--accent);">
+                    <h3>Pending Orders</h3>
+                    <p id="admin-stat-pending">0</p>
+                </div>
+                <div class="stat-card" style="border-left-color: var(--primary);">
+                    <h3>Active Products</h3>
+                    <p id="admin-stat-products">0</p>
+                </div>
+            </div>
+
+            <!-- Admin Navigation Tabs -->
+            <div class="admin-header-tabs">
+                <div class="admin-tab active" id="admin-tab-orders-btn" onclick="switchAdminTab('orders')">Order Management</div>
+                <div class="admin-tab" id="admin-tab-products-btn" onclick="switchAdminTab('products')">Product Inventory</div>
+            </div>
+
+            <!-- Admin Tab: Orders Management -->
+            <div id="admin-tab-orders" class="admin-tab-content">
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Order Ref</th>
+                                <th>Customer Details</th>
+                                <th>Total (₦)</th>
+                                <th>Order Status</th>
+                                <th>Time</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-orders-table-body">
+                            <!-- Populated via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Admin Tab: Products Management -->
+            <div id="admin-tab-products" class="admin-tab-content" style="display:none;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                    <h4>All Bakery Products</h4>
+                    <button class="btn btn-sm btn-primary" onclick="openModal('add-product-modal')"><i class="fas fa-plus"></i> Add New Product</button>
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Product Name</th>
+                                <th>Category</th>
+                                <th>Price (₦)</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-products-table-body">
+                            <!-- Populated via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Add Product Modal -->
+    <div class="modal-overlay" id="add-product-modal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-plus-circle" style="color:var(--secondary);"></i> Add New Pastry Product</h3>
+                <button class="modal-close" onclick="closeModal('add-product-modal')">&times;</button>
+            </div>
+
+            <form id="admin-add-product-form">
+                <div class="form-group">
+                    <label class="form-label">Product Name *</label>
+                    <input type="text" id="prod-add-name" class="form-input" placeholder="e.g. Chocolate Cream Milk Doughnut" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Category *</label>
+                        <select id="prod-add-category" class="form-select">
+                            <option value="Doughnuts">Doughnuts</option>
+                            <option value="Chin Chin & Snacks">Chin Chin & Snacks</option>
+                            <option value="Cakes">Cakes</option>
+                            <option value="Pastries & Meat Pies">Pastries & Meat Pies</option>
+                            <option value="Drinks">Drinks</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Price in Naira (₦) *</label>
+                        <input type="number" id="prod-add-price" class="form-input" placeholder="1500" min="50" step="50" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Image URL *</label>
+                    <input type="url" id="prod-add-image" class="form-input" placeholder="https://images.unsplash.com/..." required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea id="prod-add-desc" class="form-textarea" rows="2" placeholder="Brief appetizing product description..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Stock Quantity</label>
+                    <input type="number" id="prod-add-stock" class="form-input" value="100">
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width:100%;"><i class="fas fa-save"></i> Save & Publish Product</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-col">
+                <h3>Poga Cakes and Pastries</h3>
+                <p>Nigeria's premier bakery for fresh milk doughnuts, crunchy chin chin, crispy plantain chips, and custom wedding & birthday cakes.</p>
+                <p><i class="fas fa-map-marker-alt" style="color:var(--secondary);"></i> Victoria Island, Lagos | Wuse 2, Abuja</p>
+            </div>
+            <div class="footer-col">
+                <h3>Quick Contact</h3>
+                <p><i class="fas fa-phone-alt" style="color:var(--secondary);"></i> +234 801 234 5678</p>
+                <p><i class="fab fa-whatsapp" style="color:var(--secondary);"></i> +234 812 987 6543</p>
+                <p><i class="fas fa-envelope" style="color:var(--secondary);"></i> orders@pogacakes.ng</p>
+            </div>
+            <div class="footer-col">
+                <h3>Delivery Hours</h3>
+                <p>Monday - Saturday: 8:00 AM - 8:00 PM</p>
+                <p>Sunday: 10:00 AM - 6:00 PM</p>
+                <p><i class="fas fa-truck" style="color:var(--secondary);"></i> Same-day delivery available across Lagos & Abuja</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Poga Cakes & Pastries Nigeria. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- App Script -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
